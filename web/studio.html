@@ -4,8 +4,454 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Studio eurasia_ryuu — Personnalise ton kit Twitch</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Fredoka:wght@400;500;600;700&family=Caveat:wght@600&family=Quicksand:wght@400;500;600;700&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #120a14;
+  --panel: #1c1220;
+  --line: #3a2544;
+  --rose: #e7548f;
+  --rose-clair: #ff8fb8;
+  --texte: #f0e2ee;
+  --doux: #b193c4;
+}
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--texte);
+  font-family: 'Quicksand', sans-serif;
+  overflow: hidden;
+}
+
+.app { display: flex; flex-direction: column; height: 100vh; }
+
+.topbar {
+  display: flex; align-items: center; gap: 18px;
+  padding: 14px 24px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  z-index: 10;
+}
+.topbar .logo {
+  font-family: 'Archivo', sans-serif;
+  font-weight: 900; font-size: 20px;
+  color: #fff;
+  letter-spacing: .02em;
+}
+.topbar .logo span { color: var(--rose-clair); }
+.topbar .hint { font-size: 13px; color: var(--doux); font-weight: 600; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 20px;
+  border-radius: 999px;
+  border: none;
+  font-family: 'Archivo', sans-serif;
+  font-size: 13px; font-weight: 800;
+  letter-spacing: .06em;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn-rose {
+  background: linear-gradient(105deg, var(--rose), #b967ff);
+  color: #fff;
+  box-shadow: 0 0 18px rgba(231,84,143,.4);
+}
+.btn-rose:hover { transform: translateY(-1px); box-shadow: 0 0 26px rgba(231,84,143,.6); }
+.btn-dark {
+  background: rgba(255,255,255,.06);
+  border: 1px solid var(--line);
+  color: var(--texte);
+}
+.btn-dark:hover { border-color: var(--rose-clair); }
+.topbar .spacer { flex: 1; }
+
+.main { display: flex; flex: 1; min-height: 0; }
+
+.side {
+  width: 360px;
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+  overflow-y: auto;
+  padding: 18px;
+}
+.side h3 {
+  font-family: 'Archivo', sans-serif;
+  font-size: 11px; font-weight: 800;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--doux);
+  margin: 22px 0 10px;
+}
+.side h3:first-child { margin-top: 0; }
+
+.themes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.theme-card {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid var(--line);
+  cursor: pointer;
+  position: relative;
+  background: #000;
+}
+.theme-card img { width: 100%; height: 64px; object-fit: cover; display: block; }
+.theme-card .n {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 6px 8px;
+  font-size: 11.5px; font-weight: 700;
+  background: rgba(10,4,14,.75);
+  color: #fff;
+}
+.theme-card.active { border-color: var(--rose); box-shadow: 0 0 16px rgba(231,84,143,.45); }
+
+.scene-list { display: flex; flex-direction: column; gap: 6px; }
+.scene-btn {
+  text-align: left;
+  padding: 11px 14px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid transparent;
+  color: var(--texte);
+  font-family: 'Quicksand', sans-serif;
+  font-size: 14px; font-weight: 600;
+  cursor: pointer;
+}
+.scene-btn:hover { background: rgba(255,255,255,.08); }
+.scene-btn.active {
+  background: rgba(231,84,143,.16);
+  border-color: var(--rose);
+  color: #fff;
+}
+.scene-btn small { display: block; font-size: 11px; color: var(--doux); margin-top: 2px; }
+
+.field { margin-bottom: 12px; }
+.field label {
+  display: block;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--doux);
+  margin-bottom: 5px;
+}
+.field input, .field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.05);
+  color: #fff;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 14px; font-weight: 600;
+  outline: none;
+}
+.field input:focus { border-color: var(--rose); }
+
+.swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+.sw {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.25);
+  cursor: pointer;
+}
+.sw.active { border-color: #fff; box-shadow: 0 0 12px rgba(255,255,255,.4); }
+
+.upload {
+  display: block;
+  padding: 14px;
+  border: 1.5px dashed var(--line);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 13px; font-weight: 600;
+  color: var(--doux);
+  cursor: pointer;
+}
+.upload:hover { border-color: var(--rose-clair); color: var(--texte); }
+.upload input { display: none; }
+.clear-bg {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--doux);
+  background: none; border: none; cursor: pointer;
+  text-decoration: underline;
+}
+
+.work {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.preview-head {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--line);
+}
+.preview-head .t {
+  font-family: 'Archivo', sans-serif;
+  font-size: 15px; font-weight: 800;
+}
+.preview-head .s { font-size: 12.5px; color: var(--doux); font-weight: 600; }
+.viewport-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 800px 400px at 50% 0%, rgba(231,84,143,.06), transparent 60%),
+    #0d0710;
+}
+.viewport {
+  position: relative;
+  box-shadow: 0 30px 90px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.06);
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+#stage {
+  position: absolute;
+  top: 0; left: 0;
+  transform-origin: top left;
+  overflow: hidden;
+}
+#stage .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+#stage .content { position: absolute; z-index: 10; }
+#stage .kick {
+  display: inline-block;
+  border-radius: 999px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: var(--paper);
+  border: 3px solid var(--ac);
+  color: var(--ac);
+}
+#stage h1 {
+  font-family: 'Fredoka', 'Archivo', sans-serif;
+  font-weight: 700;
+  color: var(--ink);
+  -webkit-text-stroke: var(--strokeW) var(--stroke);
+  paint-order: stroke fill;
+  line-height: .94;
+}
+#stage h1 .alt { color: var(--ac); }
+#stage .hand {
+  font-family: 'Caveat', cursive;
+  font-weight: 600;
+  color: var(--ink);
+  transform: rotate(-2deg);
+}
+#stage .games {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  letter-spacing: .4em;
+  text-transform: uppercase;
+  color: var(--pink);
+  text-shadow: 0 1px 0 var(--stroke);
+}
+#stage .tag {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  color: var(--pink);
+  text-shadow: 0 1px 0 var(--stroke);
+}
+#stage .tag b { color: var(--ink); }
+#stage .url {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--sub);
+}
+#stage .pill {
+  display: inline-block;
+  border-radius: 999px;
+  background: var(--paper);
+  border: 2px solid var(--ac2);
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  color: var(--pink);
+}
+#stage .pill b { color: var(--ac); }
+#stage .chat {
+  border-radius: 22px;
+  background: var(--paper);
+  border: 2.5px solid var(--ac);
+  overflow: hidden;
+  position: absolute;
+}
+#stage .chat-head {
+  display: flex; align-items: center; justify-content: center;
+  border-bottom: 2px dashed var(--ac2);
+  font-family: 'Archivo', sans-serif;
+  font-weight: 800;
+  letter-spacing: .4em; text-indent: .4em;
+  color: var(--ac);
+}
+#stage .row-item { border-radius: 999px; background: linear-gradient(90deg, var(--ac), var(--ac2)); opacity: .28; }
+#stage .hint-txt {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  letter-spacing: .3em; text-transform: uppercase;
+  color: var(--sub);
+  text-align: center;
+}
+#stage .input-bar {
+  position: absolute;
+  border-radius: 999px;
+  border: 2px solid var(--ac2);
+  background: var(--paper);
+  display: flex; align-items: center;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  color: var(--sub);
+}
+#stage .brand {
+  display: flex; align-items: center; gap: 12px;
+  border-radius: 999px;
+  background: var(--paper);
+  border: 2.5px solid var(--ac);
+  font-family: 'Archivo', sans-serif;
+  font-weight: 800;
+  color: var(--ink);
+}
+#stage .brand .dot { width: 11px; height: 11px; border-radius: 50%; background: var(--ac2); }
+#stage .ev {
+  display: flex; align-items: center; gap: 10px;
+  border-radius: 999px;
+  background: var(--paper);
+  border: 1.5px solid var(--ac2);
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  color: var(--pink);
+}
+#stage .ev b { color: var(--ac); }
+#stage .ev span { opacity: .65; text-transform: uppercase; }
+#stage .cam {
+  position: absolute;
+  border-radius: 22px;
+  background: var(--paper);
+  border: 2.5px solid var(--ac);
+}
+#stage .cam .inner { position: absolute; inset: 12px; border-radius: 14px; border: 1.5px dashed var(--ac2); }
+#stage .cam-label {
+  position: absolute;
+  border-radius: 999px;
+  background: linear-gradient(105deg, var(--ac), var(--ac2));
+  color: #fff;
+  font-family: 'Archivo', sans-serif;
+  font-weight: 800;
+  letter-spacing: .2em;
+  white-space: nowrap;
+}
+#stage .mode {
+  border-radius: 999px;
+  background: var(--paper);
+  border: 2px solid var(--ac2);
+  font-family: 'Archivo', sans-serif;
+  font-weight: 800;
+  letter-spacing: .3em; text-indent: .3em;
+  text-transform: uppercase;
+  color: var(--ac);
+}
+#stage .bottombar {
+  position: absolute;
+  display: flex; align-items: center; justify-content: center;
+  gap: 26px;
+}
+#stage .bottombar .rule { height: 2px; background: var(--ac); }
+#stage .bottombar span {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  letter-spacing: .3em; text-indent: .3em;
+  text-transform: uppercase;
+  color: var(--pink);
+}
+#stage .dots { display: flex; gap: 12px; }
+#stage .dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--ac); }
+#stage .dots i:nth-child(2) { background: var(--ac2); }
+#stage .dots i:nth-child(3) { background: var(--sub); }
+#stage .shade { position: absolute; inset: 0; z-index: 1; }
+
+.panels-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 6px; }
+.panel-edit { background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
+.panel-edit .pt { font-size: 11px; font-weight: 700; color: var(--doux); margin-bottom: 6px; letter-spacing: .12em; text-transform: uppercase; }
+.panel-edit input {
+  width: 100%; padding: 8px 10px;
+  border-radius: 8px; border: 1px solid var(--line);
+  background: rgba(255,255,255,.05); color: #fff;
+  font-size: 13px; font-weight: 600; font-family: 'Quicksand', sans-serif;
+}
+
+.note {
+  font-size: 12px; color: var(--doux); line-height: 1.6; font-weight: 500;
+  margin-top: 16px;
+}
+</style>
 </head>
 <body>
-<p>Studio eurasia_ryuu : 16 thèmes, 12 couleurs, édition des scènes Twitch, planning, story et export PNG/ZIP.</p>
-</body>
-</html>
+<div class="app">
+  <div class="topbar">
+    <div class="logo">STUDIO <span>eurasia_ryuu</span></div>
+    <div class="hint">ton kit Twitch, à ta façon ✦</div>
+    <a href="copilote.html" style="color:#ff8fb8;text-decoration:none;font-size:13px;font-weight:700;">Copilote Twitch + IA →</a>
+    <div class="spacer"></div>
+    <button class="btn btn-dark" id="btnScenePng">Télécharger cette scène (PNG)</button>
+    <button class="btn btn-rose" id="btnZip">Tout télécharger en ZIP ✦</button>
+  </div>
+
+  <div class="main">
+    <div class="side">
+      <h3>1 · Ton univers</h3>
+      <div class="themes" id="themes"></div>
+
+      <h3>2 · Ta scène</h3>
+      <div class="scene-list" id="scenes"></div>
+
+      <h3>3 · Tes textes</h3>
+      <div class="field"><label>Kick (petit bandeau)</label><input id="tKick" maxlength="40"></div>
+      <div class="field"><label>Titre — ligne 1</label><input id="tL1" maxlength="20"></div>
+      <div class="field"><label>Titre — ligne 2 (accent)</label><input id="tL2" maxlength="20"></div>
+      <div class="field"><label>Note manuscrite</label><input id="tHand" maxlength="60"></div>
+      <div class="field"><label>Ligne de jeux</label><input id="tGames" maxlength="50"></div>
+      <div class="field"><label>Tagline</label><input id="tTag" maxlength="90"></div>
+      <div class="field"><label>URL</label><input id="tUrl" maxlength="40"></div>
+
+      <h3>4 · Couleur d'accent</h3>
+      <div class="swatches" id="swatches"></div>
+
+      <h3>5 · Ton image (optionnel)</h3>
+      <label class="upload">Remplacer le fond par ta propre image<input type="file" id="bgUpload" accept="image/*"></label>
+      <button class="clear-bg" id="clearBg">↩ revenir au fond du thème</button>
+
+      <div id="scheduleEditor" style="display:none;">
+        <h3>6 bis · Tes créneaux</h3>
+        <div id="scheduleRows"></div>
+      </div>
+
+      <h3>6 · Titres des panels</h3>
+      <div class="panels-grid" id="panelEdits"></div>
+
+      <p class="note">Le ZIP contient : toutes les scènes aux dimensions exactes Twitch (bannière 1200×480, scènes 1920×1080, panels 320×96), les 4 emotes (112/56/28 px) et le guide d'installation. Le bouton « PNG » télécharge juste la scène affichée.</p>
+    </div>
+
+    <div class="work">
+      <div class="preview-head">
+        <div class="t" id="previewTitle">Bannière de profil</div>
+        <div class="s" id="previewSize">1200 × 480 px — aperçu en direct</div>
+      </div>
+      <div id="errbar"></div>
+      <div class="viewport-wrap">
+        <div class="viewport" id="viewport">
+          <div id="stage"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="vendor/html2canvas.min.js"></script>
+<script src="vendor/jszip.min.js"></script>

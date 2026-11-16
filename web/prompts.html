@@ -4,8 +4,104 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prompts prêts à coller — eurasia_ryuu</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #170a1c; --panel: #241031; --rose: #e7548f; --clair: #ff8fb8; --texte: #f7ecf3; --doux: #c9a0c2; }
+body { background: var(--bg); color: var(--texte); font-family: 'Quicksand', sans-serif; margin: 0; }
+.topbar { display: flex; align-items: center; gap: 16px; padding: 16px 22px; background: var(--panel); border-bottom: 1px solid rgba(255,143,184,.2); flex-wrap: wrap; }
+.topbar .logo { font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: 17px; }
+.topbar .logo span { color: var(--clair); }
+.topbar a { color: var(--clair); text-decoration: none; font-size: 13px; font-weight: 700; }
+.topbar .spacer { flex: 1; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 24px 18px 60px; }
+h1 { font-family: 'Unbounded', sans-serif; font-size: clamp(24px, 5vw, 40px); line-height: 1.15; }
+.sub { margin-top: 12px; font-size: 16px; line-height: 1.7; color: var(--doux); font-weight: 600; max-width: 720px; }
+.howto { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 26px 0; }
+@media (max-width: 700px) { .howto { grid-template-columns: 1fr; } }
+.step { background: rgba(255,255,255,.05); border-left: 3px solid var(--rose); border-radius: 0 12px 12px 0; padding: 14px 16px; font-size: 14px; line-height: 1.65; font-weight: 600; }
+.step b { display: block; color: var(--clair); margin-bottom: 4px; font-family: 'Unbounded', sans-serif; font-size: 13px; }
+.chats { display: flex; gap: 10px; flex-wrap: wrap; margin: 18px 0 30px; }
+.chatlink { padding: 10px 18px; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,143,184,.35); color: var(--clair); text-decoration: none; font-size: 13px; font-weight: 700; }
+.chatlink:hover { border-color: var(--rose); }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+@media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+.card { background: var(--panel); border: 1px solid rgba(255,143,184,.22); border-radius: 16px; padding: 18px 20px; display: flex; flex-direction: column; }
+.card h3 { font-family: 'Unbounded', sans-serif; font-size: 15px; margin-bottom: 10px; color: #fff; }
+.card .cat { font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--clair); margin-bottom: 8px; }
+.prompt { flex: 1; background: rgba(0,0,0,.25); border-radius: 10px; padding: 14px; font-size: 13.5px; line-height: 1.65; color: var(--doux); white-space: pre-wrap; }
+.card .actions { display: flex; gap: 10px; margin-top: 14px; }
+.btn { padding: 10px 18px; border-radius: 999px; border: none; cursor: pointer; font-family: 'Unbounded', sans-serif; font-size: 12px; font-weight: 700; background: linear-gradient(105deg, var(--rose), #b967ff); color: #fff; }
+.btn.dark { background: rgba(255,255,255,.07); border: 1px solid rgba(255,143,184,.3); color: var(--texte); }
+.copied { background: rgba(80,200,140,.2) !important; border-color: rgba(80,200,140,.5) !important; color: #8fe3b0 !important; }
+</style>
 </head>
 <body>
-<p>Prompts prêts à copier-coller dans un chat IA gratuit pour aider la streameuse.</p>
+<div class="topbar">
+  <div class="logo">Prompts <span>prêts à coller</span></div>
+  <div class="spacer"></div>
+  <a href="index.html">← accueil</a>
+  <a href="copilote.html">copilote</a>
+  <a href="studio.html">studio</a>
+</div>
+<div class="wrap">
+  <h1>Colle, c'est tout.</h1>
+  <p class="sub">Pas besoin de savoir « parler à l'IA ». Choisis un prompt, clique <b>Copier</b>, colle-le dans un chat IA gratuit. Les réponses seront déjà adaptées à ta chaîne : mannequin + gameuse, Dark Souls, Valorant, chill, ton univers dragon.</p>
+  <div class="howto">
+    <div class="step"><b>1 · Choisis ton chat IA gratuit</b>N'importe lequel fait l'affaire. Liens juste en dessous.</div>
+    <div class="step"><b>2 · Clique « Copier » sur un prompt</b>Le texte est copié dans ton presse-papiers, prêt à l'emploi.</div>
+    <div class="step"><b>3 · Colle et envoie</b>Dans le chat, colle le prompt et appuie sur Entrée. Lis la réponse et adapte si besoin.</div>
+  </div>
+  <div class="chats">
+    <span style="font-size:13px;font-weight:700;color:var(--doux);align-self:center;">Chats IA gratuits :</span>
+    <a class="chatlink" href="https://www.kimi.com" target="_blank" rel="noopener">Kimi ↗</a>
+    <a class="chatlink" href="https://chat.openai.com" target="_blank" rel="noopener">ChatGPT ↗</a>
+    <a class="chatlink" href="https://gemini.google.com" target="_blank" rel="noopener">Gemini ↗</a>
+    <a class="chatlink" href="https://copilot.microsoft.com" target="_blank" rel="noopener">Copilot ↗</a>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+<script>
+const CTX = `Contexte : je suis eurasia_ryuu, streameuse française débutante (mannequin dans la vraie vie, gameuse). Je joue à Dark Souls, Valorant et je fais du Just Chatting. Petite chaîne (~25 followers), identité visuelle anime (dragonne au coucher de soleil). Réponds en français, de façon concrète, actionnable et chaleureuse.`;
+const PROMPTS = [
+  { cat: "Contenu", title: "5 titres de stream pour la semaine", text: `${CTX}\n\nPropose 5 titres de stream Twitch pour cette semaine : 2 Dark Souls, 2 Valorant, 1 Just Chatting. Courts, accrocheurs, en français, adaptés à une petite chaîne qui veut être découverte.` },
+  { cat: "Contenu", title: "Écris ma bio Twitch", text: `${CTX}\n\nRédige ma bio Twitch : courte, personnelle, chaleureuse, avec ma vibe mannequin + gameuse + dragon. Ajoute ce que je joue et ce qu'on trouve sur ma chaîne. En français.` },
+  { cat: "Contenu", title: "Planning de stream réaliste", text: `${CTX}\n\nPropose un planning de 3 créneaux de stream pour la semaine prochaine (jours et heures en soirée), varié entre Dark Souls, Valorant et Just Chatting, réaliste pour quelqu'un qui débute. En français.` },
+  { cat: "Contenu", title: "Idées de contenus pour grandir", text: `${CTX}\n\nDonne 8 idées de contenus pour faire grandir ma petite chaîne : formats de lives, clips TikTok, concepts de discussions en Just Chatting. Concret et actionnable, en français.` },
+  { cat: "Communauté", title: "Règles du chat courtes et claires", text: `${CTX}\n\nRédige des règles de chat Twitch courtes et claires (5-6 règles max), bienveillantes mais fermes, en français, adaptées à une petite communauté chill.` },
+  { cat: "Communauté", title: "Répondre à un troll dans le chat", text: `${CTX}\n\nUn viewer trolle dans mon chat en disant que je suis nulle au jeu. Donne-moi 3 façons de répondre : une avec humour et confiance, une calme et claire, une ferme qui remet les choses au point sans agressivité. En français, courtes réponses prêtes à dire à l'oral.` },
+  { cat: "Communauté", title: "Message de bienvenue pour mon Discord", text: `${CTX}\n\nRédige un message de bienvenue pour mon serveur Discord « Le nid de Ryuu » : règles courtes, ambiance dragon et chill, instructions pour accepter les règles avec une réaction 🐉 et recevoir les notifs de live avec 🔔. En français.` },
+  { cat: "Technique", title: "Checklist avant mon premier live", text: `${CTX}\n\nFais-moi une checklist complète et simple pour préparer mon premier live Twitch : installation de l'identité visuelle, scènes OBS, widgets chat et alertes, réglages sortie (1080p60, 6000 kbps), musique stream-safe, test en local, titre et story avant de lancer. En français, étape par étape.` },
+  { cat: "Technique", title: "Configurer mes alertes follow/sub/don", text: `${CTX}\n\nExplique-moi simplement comment configurer des alertes follow, sub et don avec StreamElements (gratuit) sur OBS : création du compte, alert box, ajout en source navigateur, positionnement dans mes scènes. En français, étape par étape.` },
+  { cat: "Motivation", title: "Motivation quand personne ne regarde", text: `${CTX}\n\nJe streame et parfois il n'y a presque personne dans le chat. Donne-moi des conseils concrets et bienveillants pour continuer à parler même quand c'est vide, garder la motivation, et transformer les petits chiffres en réguliers. En français.` },
+  { cat: "Motivation", title: "Objectif affiliation Twitch", text: `${CTX}\n\nExplique-moi les conditions actuelles du programme d'Affiliation Twitch (2026) et donne-moi un plan réaliste pour les atteindre : 25 followers, 4h de stream, 4 jours différents, 3 viewers moyens sur 4 jours. Puis le premier retrait de 50 $. En français, étape par étape.` },
+  { cat: "Motivation", title: "Gérer mon premier retrait de 50 $", text: `${CTX}\n\nExplique-moi comment recevoir mon premier paiement Twitch : conditions d'Affiliation, formulaire fiscal (W-9 / W-8BEN hors US), moyen de paiement, délai, seuil de 50 $. En français, simple et clair.` },
+];
+const grid = document.getElementById("grid");
+PROMPTS.forEach(p => {
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `<div class="cat">${p.cat}</div><h3>${p.title}</h3><div class="prompt">${p.text.replace(/</g, "&lt;")}</div>
+    <div class="actions">
+      <button class="btn copy">Copier</button>
+      <a class="btn dark" href="https://www.kimi.com" target="_blank" rel="noopener">ouvrir Kimi ↗</a>
+    </div>`;
+  const btn = card.querySelector(".copy");
+  btn.onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(p.text);
+      btn.textContent = "Copié ✓";
+      btn.classList.add("copied");
+      setTimeout(() => { btn.textContent = "Copier"; btn.classList.remove("copied"); }, 1600);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = p.text; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove();
+      btn.textContent = "Copié ✓"; btn.classList.add("copied");
+      setTimeout(() => { btn.textContent = "Copier"; btn.classList.remove("copied"); }, 1600);
+    }
+  };
+  grid.appendChild(card);
+});
+</script>
 </body>
 </html>

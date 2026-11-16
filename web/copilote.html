@@ -4,8 +4,372 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Copilote Twitch — eurasia_ryuu</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Quicksand:wght@400;500;600;700&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #120a14; --panel: #1c1220; --line: #3a2544; --rose: #e7548f; --clair: #ff8fb8; --texte: #f0e2ee; --doux: #b193c4; --violet: #9146ff; }
+body { background: var(--bg); color: var(--texte); font-family: 'Quicksand', sans-serif; margin: 0; }
+.topbar { display: flex; align-items: center; gap: 16px; padding: 16px 26px; background: var(--panel); border-bottom: 1px solid var(--line); }
+.topbar .logo { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 20px; }
+.topbar .logo span { color: var(--clair); }
+.topbar a { color: var(--clair); text-decoration: none; font-size: 13px; font-weight: 700; }
+.topbar .spacer { flex: 1; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 24px 20px 60px; }
+h2 { font-family: 'Archivo', sans-serif; font-size: 15px; letter-spacing: .22em; text-transform: uppercase; color: var(--clair); margin: 30px 0 14px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 22px; margin-bottom: 16px; }
+.card h3 { font-family: 'Archivo', sans-serif; font-size: 15px; margin-bottom: 12px; }
+.row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+input, select, textarea { background: rgba(255,255,255,.05); border: 1px solid var(--line); border-radius: 10px; color: #fff; font-family: 'Quicksand', sans-serif; font-size: 14px; font-weight: 600; padding: 11px 13px; outline: none; }
+input:focus, textarea:focus { border-color: var(--rose); }
+input[type=text] { min-width: 280px; }
+textarea { width: 100%; min-height: 90px; resize: vertical; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: 999px; border: none; cursor: pointer; font-family: 'Archivo', sans-serif; font-size: 13px; font-weight: 800; letter-spacing: .05em; background: linear-gradient(105deg, var(--rose), #b967ff); color: #fff; }
+.btn:hover { filter: brightness(1.1); }
+.btn.dark { background: rgba(255,255,255,.07); border: 1px solid var(--line); color: var(--texte); }
+.btn.twitch { background: var(--violet); }
+.btn:disabled { opacity: .5; cursor: wait; }
+.muted { color: var(--doux); font-size: 13px; line-height: 1.6; font-weight: 500; }
+a.link { color: var(--clair); }
+.avatar { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--rose); }
+.badge { display: inline-block; padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; background: rgba(231,84,143,.18); color: var(--clair); border: 1px solid rgba(231,84,143,.4); }
+.badge.ok { background: rgba(80,200,140,.15); color: #8fe3b0; border-color: rgba(80,200,140,.4); }
+.badge.off { background: rgba(255,255,255,.06); color: var(--doux); border-color: var(--line); }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th { text-align: left; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--doux); padding: 8px 6px; border-bottom: 1px solid var(--line); }
+td { padding: 10px 6px; border-bottom: 1px solid rgba(255,255,255,.05); }
+.msg { padding: 12px 16px; border-radius: 12px; margin: 8px 0; font-size: 14px; line-height: 1.65; white-space: pre-wrap; }
+.msg.user { background: rgba(145,70,255,.18); margin-left: 40px; }
+.msg.ai { background: rgba(255,255,255,.05); margin-right: 40px; }
+.chatlog { max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; }
+.small { font-size: 12px; }
+@media (max-width: 760px) {
+  .topbar { flex-wrap: wrap; gap: 10px; padding: 12px 16px; }
+  .topbar .logo { font-size: 16px; }
+  .wrap { padding: 14px 12px 40px; }
+  .card { padding: 16px; }
+  .row { flex-direction: column; align-items: stretch; }
+  .row > * { width: 100%; }
+  input[type=text] { min-width: 0; width: 100%; }
+  .btn { justify-content: center; }
+  table { font-size: 12px; }
+  .avatar { width: 48px; height: 48px; }
+  .msg.user { margin-left: 16px; }
+  .msg.ai { margin-right: 16px; }
+}
+</style>
 </head>
 <body>
-<p>Copilote Twitch : connexion OAuth, planning, titres, vidéos et assistant IA gratuit (Gemini, OpenRouter, Groq, Mistral).</p>
+<div class="topbar">
+  <div class="logo">COPILOTE <span>eurasia_ryuu</span></div>
+  <div class="spacer"></div>
+  <a href="index.html">← retour au Studio</a>
+  <span class="badge off" id="connBadge">non connectée</span>
+</div>
+<div class="wrap">
+  <div class="card" id="setupCard">
+    <h3>1 · Connecte ton compte Twitch</h3>
+    <p class="muted">L'outil fonctionne avec l'API officielle Twitch (gratuite). Il te faut un <b>client_id</b> :</p>
+    <ol class="muted">
+      <li>Va sur <a class="link" href="https://dev.twitch.tv/console/apps" target="_blank">dev.twitch.tv/console/apps</a> et crée une app (gratuit) : nom « Copilote eurasia », type « Application ».</li>
+      <li>Dans <b>OAuth Redirect URLs</b>, ajoute l'URL exacte de cette page (<code id="currentUrl"></code>).</li>
+      <li>Copie le <b>Client ID</b> ci-dessous et clique « Se connecter ». Twitch te demandera d'autoriser l'accès (lecture chaîne, planning, titres).</li>
+    </ol>
+    <div class="row">
+      <input type="text" id="clientId" placeholder="Client ID de ton app Twitch">
+      <button class="btn twitch" id="btnConnect">Se connecter avec Twitch</button>
+    </div>
+    <p class="muted small">Le token reste dans ton navigateur (localStorage), jamais envoyé ailleurs que sur les serveurs officiels de Twitch.</p>
+  </div>
+  <div class="card" id="profileCard" style="display:none;">
+    <h3>Ta chaîne</h3>
+    <div class="row">
+      <img class="avatar" id="pAvatar" alt="">
+      <div>
+        <div style="font-family:'Archivo',sans-serif;font-size:20px;font-weight:800;" id="pName"></div>
+        <div class="muted" id="pFollowers"></div>
+        <div class="muted small" id="pLogin"></div>
+      </div>
+      <div class="spacer" style="flex:1"></div>
+      <button class="btn dark" id="btnLogout">Déconnexion</button>
+    </div>
+  </div>
+  <div class="card" id="titleCard" style="display:none;">
+    <h3>Titre & catégorie du prochain live</h3>
+    <div class="row" style="margin-bottom:12px;">
+      <input type="text" id="streamTitle" style="flex:1;min-width:320px;" placeholder="Titre de ton stream">
+    </div>
+    <div class="row">
+      <select id="streamGame">
+        <option value="">— catégorie —</option>
+        <option>Just Chatting</option>
+        <option>Dark Souls</option>
+        <option>Dark Souls II</option>
+        <option>Dark Souls III</option>
+        <option>Elden Ring</option>
+        <option>VALORANT</option>
+        <option>Variety</option>
+        <option>Art</option>
+        <option>Music</option>
+      </select>
+      <button class="btn" id="btnSaveTitle">Mettre à jour sur Twitch</button>
+      <span class="muted" id="titleStatus"></span>
+    </div>
+  </div>
+  <div class="card" id="scheduleCard" style="display:none;">
+    <h3>Planning de tes lives</h3>
+    <div id="scheduleList"></div>
+    <div class="row" style="margin-top:14px;">
+      <input type="datetime-local" id="schedStart">
+      <input type="text" id="schedTitle" placeholder="Titre du créneau" style="min-width:220px;">
+      <select id="schedGame">
+        <option>Just Chatting</option><option>Dark Souls</option><option>Dark Souls III</option><option>Elden Ring</option><option>VALORANT</option>
+      </select>
+      <select id="schedDuration">
+        <option value="60">1 h</option><option value="90" selected>1 h 30</option><option value="120">2 h</option><option value="180">3 h</option><option value="240">4 h</option>
+      </select>
+      <button class="btn" id="btnAddSched">Ajouter</button>
+    </div>
+    <p class="muted small">Les créneaux apparaissent dans l'onglet Planning de ta chaîne Twitch.</p>
+  </div>
+  <div class="card" id="videosCard" style="display:none;">
+    <h3>Tes dernières vidéos</h3>
+    <table id="videosTable"><thead><tr><th>Titre</th><th>Date</th><th>Vues</th><th>Durée</th></tr></thead><tbody></tbody></table>
+  </div>
+  <div class="card" id="aiCard">
+    <h3>2 · Copilote IA (gratuit)</h3>
+    <div class="row" style="margin-bottom:10px;">
+      <select id="aiProvider">
+        <option value="gemini">Gemini (Google AI Studio — gratuit)</option>
+        <option value="kimi">Kimi (Moonshot AI)</option>
+        <option value="openrouter">OpenRouter (modèles gratuits)</option>
+        <option value="groq">Groq (gratuit)</option>
+        <option value="mistral">Mistral (gratuit)</option>
+      </select>
+      <a class="link" id="providerLink" href="https://aistudio.google.com/apikey" target="_blank">créer la clé ici ↗</a>
+    </div>
+    <p class="muted" id="providerHelp">Clé Gemini gratuite en 1 minute : sur la page liée, clique « Create API key », copie la clé (commence par AIzaSy) et colle-la ci-dessous. Elle reste stockée dans ton navigateur.</p>
+    <div class="row" style="margin-bottom:12px;">
+      <input type="text" id="geminiKey" placeholder="Ta clé Gemini (AIzaSy...)" style="flex:1;min-width:280px;">
+      <button class="btn dark" id="btnSaveKey">Enregistrer</button>
+      <span class="muted" id="keyStatus"></span>
+    </div>
+    <div class="row" style="margin-bottom:14px;">
+      <button class="btn dark ai-action" data-action="titres">5 titres de stream</button>
+      <button class="btn dark ai-action" data-action="bio">Écris ma bio</button>
+      <button class="btn dark ai-action" data-action="planning">Idées de planning</button>
+      <button class="btn dark ai-action" data-action="contenus">Idées de contenus</button>
+    </div>
+    <div class="chatlog" id="chatlog"></div>
+    <div class="row" style="margin-top:12px;">
+      <textarea id="aiInput" placeholder="Pose ta question au copilote (titres, idées, planning, règles Twitch, motivation…)"></textarea>
+      <button class="btn" id="btnAsk" style="align-self:flex-end;">Envoyer</button>
+    </div>
+  </div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const store = {
+  get: (k, d = "") => localStorage.getItem("copilote_" + k) || d,
+  set: (k, v) => localStorage.setItem("copilote_" + k, v),
+  del: k => localStorage.removeItem("copilote_" + k),
+};
+$("currentUrl").textContent = location.origin + location.pathname;
+$("clientId").value = store.get("client_id");
+$("geminiKey").value = store.get("gemini_key");
+let TOKEN = store.get("twitch_token");
+let USER = null;
+const GAMES = { "Just Chatting": "509658", "Dark Souls": "2929", "Dark Souls II": "2928", "Dark Souls III": "2927", "Elden Ring": "512953", "VALORANT": "516575", "Variety": "509663", "Art": "509660", "Music": "509677" };
+$("btnConnect").onclick = () => {
+  const cid = $("clientId").value.trim();
+  if (!cid) { alert("Colle d'abord ton Client ID."); return; }
+  store.set("client_id", cid);
+  const scope = "user:read:email channel:read:subscriptions channel:manage:broadcast channel:manage:schedule moderation:read:followers";
+  const url = `https://id.twitch.tv/oauth2/authorize?client_id=${encodeURIComponent(cid)}&redirect_uri=${encodeURIComponent(location.origin + location.pathname)}&response_type=token&scope=${encodeURIComponent(scope)}`;
+  location.href = url;
+};
+$("btnLogout").onclick = () => { store.del("twitch_token"); location.reload(); };
+if (location.hash.includes("access_token")) {
+  const params = new URLSearchParams(location.hash.slice(1));
+  const t = params.get("access_token");
+  if (t) { TOKEN = t; store.set("twitch_token", t); history.replaceState(null, "", location.pathname); }
+}
+async function helix(path, opts = {}) {
+  const r = await fetch("https://api.twitch.tv/helix" + path, {
+    ...opts,
+    headers: {
+      "Client-ID": store.get("client_id"),
+      "Authorization": "Bearer " + TOKEN,
+      "Content-Type": "application/json",
+      ...(opts.headers || {}),
+    },
+  });
+  if (r.status === 401) { store.del("twitch_token"); throw new Error("Token expiré — reconnecte-toi."); }
+  if (!r.ok) throw new Error("Twitch " + r.status + " : " + await r.text());
+  return r.json();
+}
+async function boot() {
+  if (!TOKEN) return;
+  try {
+    const u = await helix("/users");
+    USER = u.data[0];
+    $("setupCard").style.display = "none";
+    $("profileCard").style.display = "block";
+    $("titleCard").style.display = "block";
+    $("scheduleCard").style.display = "block";
+    $("videosCard").style.display = "block";
+    $("connBadge").textContent = "connectée ✓";
+    $("connBadge").className = "badge ok";
+    $("pAvatar").src = USER.profile_image_url;
+    $("pName").textContent = USER.display_name;
+    $("pLogin").textContent = "@" + USER.login;
+    const f = await helix("/channels/followers?broadcaster_id=" + USER.id);
+    $("pFollowers").textContent = (f.total ?? "—") + " followers";
+    loadSchedule();
+    loadVideos();
+  } catch (e) { alert(e.message); }
+}
+boot();
+$("btnSaveTitle").onclick = async () => {
+  const title = $("streamTitle").value.trim();
+  const game = $("streamGame").value;
+  const body = {};
+  if (title) body.title = title;
+  if (game) body.game_id = GAMES[game];
+  if (!Object.keys(body).length) { $("titleStatus").textContent = "Remplis au moins un champ."; return; }
+  $("titleStatus").textContent = "…";
+  try {
+    await helix("/channels?broadcaster_id=" + USER.id, { method: "PATCH", body: JSON.stringify(body) });
+    $("titleStatus").textContent = "Mis à jour sur ta chaîne ✓";
+  } catch (e) { $("titleStatus").textContent = e.message; }
+};
+async function loadSchedule() {
+  const el = $("scheduleList");
+  el.innerHTML = "<p class='muted'>Chargement du planning…</p>";
+  try {
+    const r = await helix("/schedule?broadcaster_id=" + USER.id);
+    const segs = r.data?.segments || [];
+    if (!segs.length) { el.innerHTML = "<p class='muted'>Aucun créneau programmé. Ajoute le premier ci-dessous.</p>"; return; }
+    el.innerHTML = "<table><thead><tr><th>Début</th><th>Titre</th><th>Durée</th><th></th></tr></thead><tbody>" +
+      segs.map(s => `<tr><td>${new Date(s.start_time).toLocaleString("fr-FR", { dateStyle: "medium", timeStyle: "short" })}</td>
+        <td>${s.title}</td><td>${s.duration} min</td>
+        <td><button class="btn dark small" data-del="${s.id}">supprimer</button></td></tr>`).join("") + "</tbody></table>";
+    el.querySelectorAll("[data-del]").forEach(b => b.onclick = async () => {
+      if (!confirm("Supprimer ce créneau ?")) return;
+      await helix("/schedule/segment?broadcaster_id=" + USER.id + "&id=" + b.dataset.del, { method: "DELETE" });
+      loadSchedule();
+    });
+  } catch (e) { el.innerHTML = "<p class='muted'>" + e.message + "</p>"; }
+}
+$("btnAddSched").onclick = async () => {
+  const start = $("schedStart").value;
+  if (!start) { alert("Choisis une date et une heure."); return; }
+  const iso = new Date(start).toISOString();
+  const body = {
+    start_time: iso,
+    duration: parseInt($("schedDuration").value, 10),
+    title: $("schedTitle").value.trim() || "Live",
+    category_id: GAMES[$("schedGame").value] || GAMES["Just Chatting"],
+    is_recurring: false,
+    timezone: "Europe/Paris",
+  };
+  try {
+    await helix("/schedule/segment?broadcaster_id=" + USER.id, { method: "POST", body: JSON.stringify(body) });
+    loadSchedule();
+  } catch (e) { alert(e.message); }
+};
+async function loadVideos() {
+  const r = await helix("/videos?user_id=" + USER.id + "&first=8");
+  $("videosTable").querySelector("tbody").innerHTML = r.data.map(v =>
+    `<tr><td>${v.title}</td><td>${new Date(v.created_at).toLocaleDateString("fr-FR")}</td><td>${v.view_count}</td><td>${v.duration}</td></tr>`
+  ).join("");
+}
+$("btnSaveKey").onclick = () => { store.set("gemini_key", $("geminiKey").value.trim()); $("keyStatus").textContent = "Clé enregistrée ✓"; };
+function aiMsg(text, who) {
+  const d = document.createElement("div");
+  d.className = "msg " + who;
+  d.textContent = text;
+  $("chatlog").appendChild(d);
+  $("chatlog").scrollTop = $("chatlog").scrollHeight;
+  return d;
+}
+const CONTEXT = () => `Tu es le copilote streaming de eurasia_ryuu, une streameuse française (mannequin + gameuse).
+Elle joue à Dark Souls, Valorant et fait du Just Chatting. Petite chaîne (~25 followers) avec une identité visuelle anime (dragonne au coucher de soleil).
+Réponds en français, de façon concrète, actionnable et chaleureuse, adaptée à une petite chaîne.`;
+const PROVIDERS = {
+  gemini: {
+    url: "https://aistudio.google.com/apikey",
+    help: "Clé Gemini gratuite en 1 minute : sur la page liée, clique « Create API key », copie la clé (commence par AIzaSy) et colle-la ci-dessous. Elle reste stockée dans ton navigateur.",
+    endpoint: k => `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${k}`,
+    headers: () => ({ "Content-Type": "application/json" }),
+    body: p => ({ contents: [{ role: "user", parts: [{ text: p }] }] }),
+    extract: j => j.candidates?.[0]?.content?.parts?.map(x => x.text).join("\n"),
+  },
+  kimi: {
+    url: "https://platform.moonshot.ai/console/api-keys",
+    help: "Clé Kimi : sur platform.moonshot.ai, crée une clé API dans « API Keys », copie-la (commence par sk-) et colle-la ci-dessous.",
+    endpoint: () => "https://api.moonshot.ai/v1/chat/completions",
+    headers: k => ({ "Content-Type": "application/json", "Authorization": "Bearer " + k }),
+    body: p => ({ model: "kimi-k2-0711-preview", messages: [{ role: "user", content: p }] }),
+    extract: j => j.choices?.[0]?.message?.content,
+  },
+  openrouter: {
+    url: "https://openrouter.ai/settings/keys",
+    help: "Clé OpenRouter : sur openrouter.ai/settings/keys, « Create Key », copie-la (commence par sk-or-v1-) et colle-la ci-dessous. Choisis un modèle marqué « free » (ex. Llama 3.3 70B free).",
+    endpoint: () => "https://openrouter.ai/api/v1/chat/completions",
+    headers: k => ({ "Content-Type": "application/json", "Authorization": "Bearer " + k }),
+    body: p => ({ model: "meta-llama/llama-3.3-70b-instruct:free", messages: [{ role: "user", content: p }] }),
+    extract: j => j.choices?.[0]?.message?.content,
+  },
+  groq: {
+    url: "https://console.groq.com/keys",
+    help: "Clé Groq : sur console.groq.com/keys, « Create API Key », copie-la (commence par gsk_) et colle-la ci-dessous. Gratuit et très rapide.",
+    endpoint: () => "https://api.groq.com/openai/v1/chat/completions",
+    headers: k => ({ "Content-Type": "application/json", "Authorization": "Bearer " + k }),
+    body: p => ({ model: "llama-3.3-70b-versatile", messages: [{ role: "user", content: p }] }),
+    extract: j => j.choices?.[0]?.message?.content,
+  },
+  mistral: {
+    url: "https://console.mistral.ai/api-keys",
+    help: "Clé Mistral : sur console.mistral.ai/api-keys, crée une clé, copie-la et colle-la ci-dessous. Le palier gratuit suffit pour le copilote.",
+    endpoint: () => "https://api.mistral.ai/v1/chat/completions",
+    headers: k => ({ "Content-Type": "application/json", "Authorization": "Bearer " + k }),
+    body: p => ({ model: "mistral-small-latest", messages: [{ role: "user", content: p }] }),
+    extract: j => j.choices?.[0]?.message?.content,
+  },
+};
+function currentProvider() { return PROVIDERS[$("aiProvider").value]; }
+$("aiProvider").addEventListener("change", () => {
+  const p = currentProvider();
+  $("providerLink").href = p.url;
+  $("providerHelp").textContent = p.help;
+});
+async function askGemini(prompt) {
+  const key = store.get("gemini_key");
+  if (!key) { aiMsg("Ajoute d'abord ta clé (lien « créer la clé ici » au-dessus du champ).", "ai"); return; }
+  const prov = currentProvider();
+  const thinking = aiMsg("… le copilote réfléchit …", "ai");
+  try {
+    const r = await fetch(prov.endpoint(key), {
+      method: "POST",
+      headers: prov.headers(key),
+      body: JSON.stringify(prov.body(CONTEXT() + "\n\n" + prompt)),
+    });
+    const j = await r.json();
+    const txt = prov.extract(j) || j.error?.message || "Pas de réponse.";
+    thinking.textContent = txt;
+  } catch (e) { thinking.textContent = "Erreur : " + e.message; }
+}
+$("btnAsk").onclick = () => { const q = $("aiInput").value.trim(); if (!q) return; aiMsg(q, "user"); $("aiInput").value = ""; askGemini(q); };
+document.querySelectorAll(".ai-action").forEach(b => b.onclick = () => {
+  const prompts = {
+    titres: "Propose 5 titres de stream Twitch accrocheurs pour cette semaine (2 Dark Souls, 2 Valorant, 1 Just Chatting), courts et en français.",
+    bio: "Rédige une bio Twitch courte et personnelle pour eurasia_ryuu, chaleureuse, avec sa vibe mannequin + gameuse + dragon.",
+    planning: "Propose un planning de 3 créneaux de stream pour la semaine prochaine (jours et heures en soirée), varié entre Dark Souls, Valorant et Just Chatting, réaliste pour une petite chaîne.",
+    contenus: "Donne 6 idées de contenus pour faire grandir cette petite chaîne (formats de lives, clips TikTok, concepts de discussions en Just Chatting), en français.",
+  };
+  aiMsg(b.textContent, "user");
+  askGemini(prompts[b.dataset.action]);
+});
+</script>
 </body>
 </html>
