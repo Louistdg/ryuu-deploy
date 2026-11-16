@@ -1,8 +1,10 @@
 {$DOMAIN} {
-    root * /srv/web
-    file_server
-    handle_path /api/* {
+    encode gzip
+    handle /api/* {
         reverse_proxy backend:3000
     }
-    encode gzip
+    handle {
+        root * /srv/web
+        file_server
+    }
 }
