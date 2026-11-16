@@ -1,7 +1,16 @@
 import Fastify from "fastify";
 import cron from "node-cron";
 
-const { GEMINI_API_KEY, TWITCH_CLIENT_ID, TWITCH_TOKEN, DISCORD_BOT_TOKEN, DISCORD_CHANNEL_ID } = process.env;
+const {
+  GEMINI_API_KEY,
+  GEMINI_MODEL = "gemini-2.5-flash",
+  TWITCH_CLIENT_ID,
+  TWITCH_TOKEN,
+  DISCORD_BOT_TOKEN,
+  DISCORD_CHANNEL_ID,
+  ADMIN_TOKEN = "",
+} = process.env;
+
 const app = Fastify({ logger: true });
 app.get("/api/health", async () => ({ ok: true }));
 
@@ -23,9 +32,9 @@ app.post("/api/ai/chat", async (req) => {
   const { prompt } = req.body || {};
   if (!prompt) return { error: "prompt requis" };
   const context = `Tu es le copilote streaming de eurasia_ryuu, streameuse française (mannequin + gameuse, Dark Souls, Valorant, Just Chatting, identité anime dragonne au coucher de soleil). Réponds en français, concrètement, chaleureusement.`;
-  const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`, {
+  const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "x-goog-api-key": GEMINI_API_KEY },
     body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: context + "\n\n" + prompt }] }] }),
   });
   const j = await r.json();
@@ -36,6 +45,9 @@ app.get("/api/twitch/user", async () => (await helix("/users")).data[0]);
 app.get("/api/twitch/schedule", async () => { const u = await helix("/users"); return helix("/schedule?broadcaster_id=" + u.data[0].id); });
 app.get("/api/twitch/videos", async () => { const u = await helix("/users"); return helix("/videos?user_id=" + u.data[0].id + "&first=8"); });
 app.post("/api/twitch/title", async (req) => {
+  if (!ADMIN_TOKEN || req.headers["x-admin-token"] !== ADMIN_TOKEN) {
+    return { error: "Route désactivée. Définis ADMIN_TOKEN dans .env et envoie l'en-tête x-admin-token." };
+  }
   const { title, game_id } = req.body || {};
   const u = await helix("/users");
   const body = {};

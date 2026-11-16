@@ -8,7 +8,11 @@ client.once("ready", async () => {
   console.log("Bot Discord prêt");
   if (DISCORD_CHANNEL_ID) {
     const ch = await client.channels.fetch(DISCORD_CHANNEL_ID).catch(() => null);
-    if (ch) await ch.send("Le nid de Ryuu est en ligne 🐉");
+    if (ch) {
+      const sent = await ch.send("Le nid de Ryuu est en ligne 🐉");
+      console.log("Preuve message démarrage :", sent.url);
+      require("fs").writeFileSync("/tmp/bot-ready", sent.url);
+    }
   }
   startLivePolling();
 });
